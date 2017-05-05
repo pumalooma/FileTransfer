@@ -43,9 +43,14 @@ namespace FileTransfer {
             DragDrop += new DragEventHandler(Form1_DragDrop);
         }
 
-        private void InitNetwork() {
+        private void InitNetwork()
+		{
+			if(connectToIp == "-server") {
+				StartServer();
+				return;
+			}
 
-            var config = new NetPeerConfiguration("file transfer");
+			var config = new NetPeerConfiguration("file transfer");
 			if (connectToIp == null) {
 				LogText("Searching for server...");
 				config.EnableMessageType(NetIncomingMessageType.DiscoveryResponse);
@@ -87,14 +92,14 @@ namespace FileTransfer {
                     case NetIncomingMessageType.ErrorMessage:
                         LogText(msg.ReadString());
 						break;
-					case NetIncomingMessageType.StatusChanged:
-						msg.ReadByte();
-						string reason = msg.ReadString();
-						LogText(reason);
-						break;
-					default:
-						LogText(msg.MessageType.ToString());
-						break;
+					//case NetIncomingMessageType.StatusChanged:
+					//	msg.ReadByte();
+					//	string reason = msg.ReadString();
+					//	LogText(reason);
+					//	break;
+					//default:
+					//	LogText(msg.MessageType.ToString());
+					//	break;
 				}
             }
 
@@ -108,22 +113,23 @@ namespace FileTransfer {
                 }
             }
 			
-			if (!foundServer && stopWatch.Elapsed > TimeSpan.FromSeconds(3.0)) {
-                foundServer = true;
-				stopWatch.Stop();
-
+			if (!foundServer && stopWatch.Elapsed > TimeSpan.FromSeconds(1.0)) {
+                stopWatch.Stop();
                 LogText("No server found, creating one.");
-
-                var config = new NetPeerConfiguration("file transfer");
-                config = new NetPeerConfiguration("file transfer") { Port = mPort };
-                config.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
-                var server = new NetServer(config);
-                server.Start();
-                peer = server;
-
-                LogText("Server created.");
+				StartServer();
             }
         }
+
+		private void StartServer() {
+			foundServer = true;
+			var config = new NetPeerConfiguration("file transfer");
+			config = new NetPeerConfiguration("file transfer") { Port = mPort };
+			config.EnableMessageType(NetIncomingMessageType.DiscoveryRequest);
+			var server = new NetServer(config);
+			server.Start();
+			peer = server;
+			LogText("Server created.");
+		}
 
         private void HandleIncomingMessage(NetIncomingMessage msg) {
             MessageType messageType = (MessageType)msg.ReadByte();
