@@ -1,4 +1,4 @@
-set IL_MERGE="D:\Program Files (x86)\Microsoft\ILMerge\ilmerge.exe"
+set IL_MERGE="C:\Program Files (x86)\Microsoft\ILMerge\ilmerge.exe"
 set TARGET_PLATFORM=C:\Windows\Microsoft.NET\Framework64\v4.0.30319
 set OUTPUT_EXE=Download\FileTransfer.exe
 set INPUT_EXE=Source\bin\Release\FileTransfer.exe

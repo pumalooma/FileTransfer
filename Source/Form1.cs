@@ -45,6 +45,8 @@ namespace FileTransfer {
 
         private void InitNetwork()
 		{
+            LogText("Current Directory: " + Directory.GetCurrentDirectory());
+
 			if(connectToIp == "-server") {
 				StartServer();
 				return;
